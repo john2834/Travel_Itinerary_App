@@ -1,0 +1,196 @@
+:root {
+    --bg-color: #F5F5F7;
+    --card-bg: #FFFFFF;
+    --text-primary: #1D1D1F;
+    --text-secondary: #86868B;
+    --accent-color: #0071E3;
+    --danger-color: #FF3B30;
+    --gap-color: #E8E8ED; /* 空檔顏色 */
+    --radius: 16px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.06);
+    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-stack);
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 80px; /* 預留底部空間 */
+}
+
+/* Hero Header */
+.hero-header {
+    height: 30vh;
+    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6));
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    color: white;
+    position: relative;
+    transition: background-image 0.5s ease;
+}
+.hero-content { width: 100%; max-width: 800px; margin: 0 auto; }
+.hero-actions { margin-top: 10px; display: flex; gap: 10px; }
+.btn-glass {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+/* 新增：更換封面按鈕樣式 */
+.btn-edit-cover {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    backdrop-filter: blur(4px);
+}
+.btn-edit-cover:hover { background: black; }
+
+/* Sticky Date Bar */
+.sticky-date-bar {
+    position: sticky;
+    top: 0;
+    background: rgba(245, 245, 247, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    padding: 10px 0;
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-left: 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.date-card {
+    flex: 0 0 auto;
+    background: var(--card-bg);
+    padding: 8px 16px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    opacity: 0.6;
+    transition: 0.3s;
+    cursor: pointer;
+}
+.date-card.active { opacity: 1; border: 1px solid var(--accent-color); color: var(--accent-color); transform: scale(1.05); }
+
+/* Main Content */
+main { max-width: 600px; margin: 0 auto; padding: 20px; }
+.day-info { margin-bottom: 20px; }
+.subtext { color: var(--text-secondary); font-size: 14px; }
+
+/* Timeline & Cards */
+.timeline-container { position: relative; padding-left: 10px; }
+.timeline-item {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+/* 左側時間 */
+.time-col {
+    width: 50px;
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: right;
+    color: var(--text-secondary);
+    padding-top: 18px;
+}
+
+/* 右側卡片 */
+.card-col {
+    flex-grow: 1;
+    background: var(--card-bg);
+    padding: 16px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.2s;
+    border-left: 4px solid var(--accent-color);
+}
+.card-col:active { transform: scale(0.98); }
+.card-title { font-size: 17px; font-weight: 700; margin: 0 0 5px 0; }
+.card-note { font-size: 14px; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Gap Analysis (空檔) */
+.gap-item {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    opacity: 0.7;
+}
+.gap-col {
+    flex-grow: 1;
+    border: 2px dashed var(--gap-color);
+    border-radius: 12px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    background: rgba(0,0,0,0.01);
+}
+
+/* Edit Form */
+.hidden { display: none !important; }
+.row { display: flex; gap: 10px; }
+.row div { flex: 1; }
+input, textarea { width: 100%; padding: 10px; margin: 5px 0 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; background: #FAFAFA; box-sizing: border-box;}
+.btn-primary { width: 100%; padding: 12px; background: var(--accent-color); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; }
+.btn-danger { width: 100%; padding: 12px; background: var(--danger-color); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; margin-bottom: 10px;}
+.btn-add-location { width: 100%; padding: 15px; background: white; border: 2px dashed #ccc; border-radius: 12px; color: #666; font-weight: bold; margin-top: 20px; }
+
+/* Modal */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
+    z-index: 1000; display: none; align-items: flex-end; justify-content: center;
+}
+.modal-content {
+    background: white; width: 100%; max-width: 600px;
+    border-radius: 20px 20px 0 0; padding: 25px;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+    animation: slideUp 0.3s ease;
+    max-height: 90vh; overflow-y: auto;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.close-btn { background: #eee; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; color: #666; }
+.address-box { background: #f0f0f5; padding: 10px; border-radius: 8px; font-size: 13px; margin: 10px 0; word-break: break-all; user-select: all; }
+
+/* --- 新增：次級按鈕樣式 --- */
+.btn-sub-action {
+    background: #F2F2F7; /* Apple 淺灰背景 */
+    color: var(--text-primary);
+    border: 1px solid #E5E5EA;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 500;
+    flex: 1; /* 讓按鈕平均分配寬度 */
+    transition: background 0.2s;
+}
+
+.btn-sub-action:active {
+    background: #D1D1D6;
+    transform: scale(0.98);
+}
