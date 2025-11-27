@@ -123,21 +123,42 @@ const app = {
             itemEl.className = 'timeline-item';
             itemEl.innerHTML = `
                 <div class="time-col">${item.startTime}</div>
-                <div class="card-col" onclick="app.openDetail('${item.id}')">
+                <div class="card-col" id="card-${item.id}" onclick="app.openDetail('${item.id}')">
                     <div class="card-title">${item.name}</div>
                     <div class="card-note" style="margin-bottom:0">${item.note || ''}</div>
                     
-                    <!-- Level 2: 簡易資訊與按鈕列 -->
-                    <div class="action-buttons" style="margin-top:10px; display:flex; gap:10px;">
-                        ${item.transport ? `
-                        <button class="btn-sub-action" onclick="event.stopPropagation(); app.showInfoModal('交通資訊', '${item.transport.info.replace(/\n/g, '<br>')}')">
-                            🚇 交通方式
-                        </button>` : ''}
+                    <div class="card-details">
+                        <div class="detail-row">
+                            <span class="detail-icon">📍</span>
+                            <span>${item.address || '無地址資訊'}</span>
+                        </div>
                         
-                        ${item.detailNote ? `
-                        <button class="btn-sub-action" onclick="event.stopPropagation(); app.showInfoModal('詳細清單/備註', '${item.detailNote.replace(/\n/g, '<br>')}')">
-                            📋 查看清單
-                        </button>` : ''}
+                        ${item.description ? `
+                        <div class="detail-row" style="margin-top:10px; color:#333;">
+                            <span class="detail-icon">ℹ️</span>
+                            <span style="white-space: pre-wrap;">${item.description}</span>
+                        </div>` : ''}
+
+                        <div class="action-buttons" style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+                            
+                            ${item.transport ? `
+                            <button class="btn-sub-action" onclick="event.stopPropagation(); app.showTransportModal('${item.transport.info.replace(/\n/g, '<br>')}', '${item.transport.mapLink || ''}')">
+                                🚇 交通方式
+                            </button>` : ''}
+                            
+                            ${(item.customLists || []).map((list, idx) => `
+                            <button class="btn-sub-action" onclick="event.stopPropagation(); app.showInfoModal('${list.title}', '${list.content.replace(/\n/g, '<br>')}')">
+                                📋 ${list.title}
+                            </button>
+                            `).join('')}
+
+                        </div>
+
+                        <div style="text-align:right; margin-top:10px;">
+                            <a href="${item.mapLink}" target="_blank" class="btn-map-small" onclick="event.stopPropagation()">
+                                🗺️ Google 地圖
+                            </a>
+                        </div>
                     </div>
                 </div>
             `;
@@ -240,6 +261,14 @@ const app = {
     },
 
     // --- 新增：通用的資訊彈窗函式 ---
+    showTransportModal: function(info, mapLink) {
+        const content = `
+            <div style="font-size:16px; line-height:1.6; color:#333; white-space: pre-wrap; margin-bottom:20px;">${info}</div>
+            ${mapLink ? `<a href="${mapLink}" target="_blank" class="btn-full" style="background:#34C759; color:white; text-decoration:none; padding:10px; border-radius:10px; display:block; text-align:center;">📍 開啟車站/路線地圖</a>` : ''}
+        `;
+        this.showInfoModal('🚇 交通方式', content); // 重用原本的 Modal
+    },
+
     showInfoModal: function(title, content) {
         // 使用現有的 Modal 結構，但設為「純瀏覽模式」
         const overlay = document.getElementById('modal-overlay');
@@ -285,12 +314,24 @@ const app = {
             document.getElementById('edit-end').value = item.endTime;
             document.getElementById('edit-address').value = item.address || '';
             document.getElementById('edit-map').value = item.mapLink || '';
-            document.getElementById('edit-note').value = item.note || '';
+            document.getElementById('edit-note').value = item.note || ''; // 短評
             
-            // --- 新增：填入深度資訊 ---
-            // 檢查有沒有 transport 物件，有的話取 info，沒有則空字串
-            document.getElementById('edit-transport').value = item.transport ? item.transport.info : '';
-            document.getElementById('edit-detail-note').value = item.detailNote || '';
+            // 新增：詳細說明
+            document.getElementById('edit-description').value = item.description || '';
+
+            // 修改：交通資訊
+            document.getElementById('edit-transport-info').value = item.transport ? item.transport.info : '';
+            document.getElementById('edit-transport-map').value = (item.transport && item.transport.mapLink) ? item.transport.mapLink : '';
+
+            // 修改：動態產生清單編輯欄位
+            const listContainer = document.getElementById('edit-custom-lists-container');
+            listContainer.innerHTML = ''; // 清空舊的
+
+            if (item.customLists && item.customLists.length > 0) {
+                item.customLists.forEach(list => this.addEditListRow(list.title, list.content));
+            } else {
+                // 如果完全沒有清單，預設不顯示，或者你可以預設一個空的
+            }
 
             document.getElementById('btn-delete').classList.remove('hidden');
         } else {
@@ -301,9 +342,30 @@ const app = {
                 <p><strong>時間：</strong> ${item.startTime} - ${item.endTime}</p>
                 <div class="address-box">📍 地址：${item.address || '無地址資訊'}</div>
                 <p>${item.note || '無備註'}</p>
+                ${item.description ? `<p style="margin-top:10px; color:#555; white-space: pre-wrap;">${item.description}</p>` : ''}
                 <a href="${item.mapLink}" target="_blank" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-top:20px;">開啟 Google 地圖</a>
             `;
         }
+    },
+
+    addEditListRow: function(title = '', content = '') {
+        const container = document.getElementById('edit-custom-lists-container');
+        const div = document.createElement('div');
+        div.className = 'custom-list-row';
+        div.style.marginBottom = '15px';
+        div.style.background = '#f9f9f9';
+        div.style.padding = '10px';
+        div.style.borderRadius = '8px';
+        div.style.border = '1px solid #eee';
+        
+        div.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                <input type="text" class="list-title-input" placeholder="清單名稱 (如：必買)" value="${title}" style="flex:1; margin-bottom:5px; font-weight:bold;">
+                <button type="button" onclick="this.parentElement.parentElement.remove()" style="background:none; border:none; color:red; font-size:18px; cursor:pointer; padding:0 10px;">✕</button>
+            </div>
+            <textarea class="list-content-input" rows="2" placeholder="內容...">${content}</textarea>
+        `;
+        container.appendChild(div);
     },
 
     openEditor: function() {
@@ -316,6 +378,7 @@ const app = {
         
         // 清空表單 (這會重置所有 input/textarea，包含我們新加的)
         document.getElementById('modal-edit-mode').reset();
+        document.getElementById('edit-custom-lists-container').innerHTML = '';
     },
 
     saveItem: function() {
@@ -325,9 +388,21 @@ const app = {
         
         if(!name || !start || !end) { alert('請填寫完整名稱與時間'); return; }
 
-        // 讀取新欄位的值
-        const transportInfo = document.getElementById('edit-transport').value.trim();
-        const detailNoteInfo = document.getElementById('edit-detail-note').value.trim();
+        // 讀取交通
+        const transInfo = document.getElementById('edit-transport-info').value.trim();
+        const transMap = document.getElementById('edit-transport-map').value.trim();
+        const transportObj = transInfo ? { info: transInfo, mapLink: transMap } : null;
+        
+        // 讀取自訂清單 (Scraping the DOM)
+        const listRows = document.querySelectorAll('.custom-list-row');
+        const customLists = [];
+        listRows.forEach(row => {
+            const title = row.querySelector('.list-title-input').value.trim();
+            const content = row.querySelector('.list-content-input').value.trim();
+            if (title && content) {
+                customLists.push({ title, content });
+            }
+        });
 
         const newItem = {
             id: this.editingItemId || 'loc_' + Date.now(),
@@ -336,14 +411,11 @@ const app = {
             endTime: end,
             address: document.getElementById('edit-address').value,
             mapLink: document.getElementById('edit-map').value,
-            note: document.getElementById('edit-note').value,
+            note: document.getElementById('edit-note').value, // Level 1 短評
+            description: document.getElementById('edit-description').value, // Level 2 詳情
             
-            // --- 新增：儲存深度資訊 ---
-            // 如果有填寫交通資訊，就存成物件；否則存 null (這樣按鈕就不會顯示)
-            transport: transportInfo ? { type: 'custom', info: transportInfo } : null,
-            
-            // 如果有填寫詳細清單，就存字串；否則存 null
-            detailNote: detailNoteInfo ? detailNoteInfo : null
+            transport: transportObj,
+            customLists: customLists.length > 0 ? customLists : null // 存入陣列
         };
 
         const day = this.data.days[this.currentDayIndex];

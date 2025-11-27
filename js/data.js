@@ -32,11 +32,20 @@ const defaultTripData = {
                     address: "東京都墨田區押上1-1-2",
                     mapLink: "https://www.google.com/maps/search/?api=1&query=Tokyo+Skytree",
                     note: "主要去買伴手禮，記得去 3F 找寶可夢中心。",
+                    
+                    // 新增：Level 2 的「詳細說明」
+                    description: "這裡很大，建議先去服務台拿地圖。退稅櫃台在 1F，記得帶護照。",
+
                     transport: {
                         type: "地鐵",
-                        info: "搭乘淺草線至押上站，B3 出口直達。\n票價：180日圓\n備註：這班車人很多，小心錢包。"
+                        info: "搭乘淺草線至押上站，B3 出口直達。\n票價：180日圓\n備註：這班車人很多，小心錢包。",
+                        mapLink: "https://goo.gl/maps/example_station" // 新增
                     },
-                    detailNote: "1. 東京香蕉蛋糕 (8入)\n2. 寶可夢中心限定皮卡丘\n3. 3F Uniqlo 買發熱衣\n4. 6F 抹茶冰淇淋 (備選)"
+                    // 修改：將 detailNote 改為自訂清單陣列 (Array)
+                    customLists: [
+                        { title: "必買清單", content: "1. 東京香蕉\n2. 豹紋蛋糕" },
+                        { title: "美食備案", content: "若敘敘苑太多人，改吃 6F 壽司" }
+                    ]
                 }
             ]
         },

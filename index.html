@@ -77,16 +77,30 @@
                 <label>Google Map 連結</label>
                 <input type="url" id="edit-map" placeholder="https://...">
 
-                <label>備註 (卡片上顯示)</label>
-                <textarea id="edit-note" rows="2"></textarea>
+                <label>備註短評 (Level 1 卡片顯示)</label>
+                <input type="text" id="edit-note" placeholder="一句話重點，例如：寄放行李">
 
-                <label>🚇 交通詳細資訊 (選填)</label>
-                <textarea id="edit-transport" rows="3" placeholder="例如：搭乘淺草線至押上站，B3 出口直達..."></textarea>
+                <label>詳細說明 (Level 2 展開顯示)</label>
+                <textarea id="edit-description" rows="3" placeholder="這裡可以寫詳細的攻略、歷史介紹、注意事項..."></textarea>
 
-                <label>📋 詳細清單/購物列表 (選填)</label>
-                <textarea id="edit-detail-note" rows="3" placeholder="例如：
-1. 東京香蕉蛋糕
-2. 藥妝店買眼藥水..."></textarea>
+                <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+
+                <label>🚇 交通方式 (Level 3)</label>
+                <div class="row">
+                    <div style="flex:2">
+                        <textarea id="edit-transport-info" rows="2" placeholder="描述：搭什麼車、哪裡轉乘..."></textarea>
+                    </div>
+                    <div style="flex:1">
+                        <input type="url" id="edit-transport-map" placeholder="車站/站牌 Google Map 連結" style="height: 100%; margin-top:0;"> 
+                    </div>
+                </div>
+
+                <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
+
+                <label>📋 自訂清單 (Level 3)</label>
+                <div id="edit-custom-lists-container">
+                    </div>
+                <button type="button" class="btn-sub-action" onclick="app.addEditListRow()" style="margin-bottom: 20px; width: 100%;">+ 新增清單 (如：購物、美食)</button>
 
                 <div class="form-actions">
                     <button type="button" class="btn-danger" id="btn-delete" onclick="app.deleteItem()">刪除</button>
