@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Travel Planner</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#F5F5F7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+
+    <header class="hero-header" id="hero-header">
+        <div class="hero-content">
+            <h1 id="trip-title">載入中...</h1>
+            
+            <input type="file" id="import-input" accept=".json" style="display:none" onchange="app.importData(this)">
+
+            <div class="hero-actions">
+                <button class="btn-glass" onclick="document.getElementById('import-input').click()"> 匯入</button>
+                <button class="btn-glass" onclick="app.exportData()"> 匯出</button>
+                <button class="btn-glass" id="btn-edit-toggle" onclick="app.toggleEditMode()"> 編輯模式</button>
+            </div>
+        </div>
+
+        <button id="btn-change-cover" class="btn-edit-cover hidden" onclick="app.editHeroImage()">📷 更換封面</button>
+    </header>
+
+    <nav class="sticky-date-bar" id="date-scroller">
+        </nav>
+
+    <main>
+        <div class="day-info">
+            <h2 id="current-date-title">Day 1</h2>
+            <p id="current-date-meta" class="subtext">2024/04/01</p>
+        </div>
+
+        <div class="timeline-container" id="timeline">
+            </div>
+
+        <div id="add-btn-area" class="add-btn-area hidden">
+            <button class="btn-add-location" onclick="app.openEditor(null)">+ 新增景點</button>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">詳細資訊</h3>
+                <button class="close-btn" onclick="app.closeModal()">✕</button>
+            </div>
+            
+            <div class="modal-body" id="modal-view-mode">
+                </div>
+
+            <form class="modal-body hidden" id="modal-edit-mode">
+                <label>地點名稱</label>
+                <input type="text" id="edit-name" required>
+                
+                <div class="row">
+                    <div>
+                        <label>開始時間 (24h)</label>
+                        <input type="time" id="edit-start" required>
+                    </div>
+                    <div>
+                        <label>結束時間 (24h)</label>
+                        <input type="time" id="edit-end" required>
+                    </div>
+                </div>
+
+                <label>地址 (純文字備用)</label>
+                <input type="text" id="edit-address" placeholder="例如：東京都台東區淺草2-3-1">
+
+                <label>Google Map 連結</label>
+                <input type="url" id="edit-map" placeholder="https://...">
+
+                <label>備註 (卡片上顯示)</label>
+                <textarea id="edit-note" rows="2"></textarea>
+
+                <label>🚇 交通詳細資訊 (選填)</label>
+                <textarea id="edit-transport" rows="3" placeholder="例如：搭乘淺草線至押上站，B3 出口直達..."></textarea>
+
+                <label>📋 詳細清單/購物列表 (選填)</label>
+                <textarea id="edit-detail-note" rows="3" placeholder="例如：
+1. 東京香蕉蛋糕
+2. 藥妝店買眼藥水..."></textarea>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-danger" id="btn-delete" onclick="app.deleteItem()">刪除</button>
+                    <button type="button" class="btn-primary" onclick="app.saveItem()">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker Registered'))
+                .catch(err => console.error('SW Check Fail', err));
+        }
+    </script>
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
