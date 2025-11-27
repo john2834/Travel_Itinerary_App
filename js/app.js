@@ -35,6 +35,14 @@ const app = {
         a.click();
     },
 
+    // --- 新增：重置資料功能 ---
+    resetData: function() {
+        if (confirm("⚠️ 警告：這將會清除所有暫存資料並還原成預設範本。\n\n確定要重置嗎？")) {
+            localStorage.removeItem('tripData'); // 清除資料庫
+            location.reload(); // 重新整理頁面以載入 data.js
+        }
+    },
+
     // --- 渲染邏輯 ---
     renderHeader: function() {
         const header = document.getElementById('hero-header');

@@ -19,9 +19,10 @@
             <input type="file" id="import-input" accept=".json" style="display:none" onchange="app.importData(this)">
 
             <div class="hero-actions">
-                <button class="btn-glass" onclick="document.getElementById('import-input').click()"> 匯入</button>
-                <button class="btn-glass" onclick="app.exportData()"> 匯出</button>
-                <button class="btn-glass" id="btn-edit-toggle" onclick="app.toggleEditMode()"> 編輯模式</button>
+                <button class="btn-glass" onclick="document.getElementById('import-input').click()">📥 匯入</button>
+                <button class="btn-glass" onclick="app.exportData()">⇪ 匯出</button>
+                <button class="btn-glass" onclick="app.resetData()" style="color:#FF3B30; border-color: rgba(255, 59, 48, 0.3);">↺ 重置</button>
+                <button class="btn-glass" id="btn-edit-toggle" onclick="app.toggleEditMode()">✎ 編輯模式</button>
             </div>
         </div>
 
@@ -96,10 +97,31 @@
     </div>
 
     <script>
+        // 偵測網址參數
+        const urlParams = new URLSearchParams(window.location.search);
+        const isDevMode = urlParams.has('dev'); // 是否有 ?dev
+
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-                .then(() => console.log('Service Worker Registered'))
-                .catch(err => console.error('SW Check Fail', err));
+            if (isDevMode) {
+                // --- 開發者模式：強制移除 Service Worker ---
+                console.warn('🚧 開發者模式：Service Worker 已停用，確保讀取最新檔案。');
+                
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                        console.log('SW Unregistered');
+                    }
+                });
+
+                // 選用：如果你想連快取檔案都清得一乾二淨，可以把下面這行打開
+                // caches.keys().then(names => { for (let name of names) caches.delete(name); });
+
+            } else {
+                // --- 用戶模式：正常註冊 PWA ---
+                navigator.serviceWorker.register('sw.js')
+                    .then(() => console.log('Service Worker Registered'))
+                    .catch(err => console.error('SW Check Fail', err));
+            }
         }
     </script>
     <script src="js/data.js"></script>
